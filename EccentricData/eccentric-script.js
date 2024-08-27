@@ -1,17 +1,100 @@
-const eccentricApp = document.querySelector("#eccentric-app");
-
 function showModal(modalHtml) {
+    let eccentricApp = document.querySelector("#eccentric-app");
     eccentricApp.innerHTML = `<div id="eccentric-modal">${modalHtml}</div>`;
 }
 
 function hideModal() {
+    let eccentricApp = document.querySelector("#eccentric-app");
     eccentricApp.innerHTML = ``;
 }
 
+function showLoginPanel() {
+    let modalHtml = `<div id="modal-login" class="scale-and-opacity-animation">
+            <div id="modal-login-top">
+                <p></p>
+            </div>
+            <div id="modal-login-middle">
+                <p></p>
+            </div>
+            <div id="modal-login-bottom">
+                <btn id="modal-login-btn-no" class="modal-login-btn modal-btn-no">
+                    <p></p>
+                </btn>
+                <btn id="modal-login-btn-yes" class="modal-login-btn modal-btn-yes">
+                    <p></p>
+                </btn>
+            </div>
+        </div>`;
+    showModal(modalHtml);
+    let textTitle = document.querySelector("#modal-login-top p");
+    let textMiddle = document.querySelector("#modal-login-middle p");
+    let textDecline = document.querySelector("#modal-login-btn-no p");
+    let textAccept = document.querySelector("#modal-login-btn-yes p");
+    let btnDecline = document.querySelector("#modal-login-btn-no");
+    let btnAccept = document.querySelector("#modal-login-btn-yes");
+    
+
+    if (isRussianLanguage()) {
+        textTitle.textContent = `АВТОРИЗАЦИЯ`;
+        textMiddle.textContent = `АВТОРИЗУЙСЯ, ЧТОБЫ НАДЁЖНО СОХРАНИТЬ СВОЙ ПРОГРЕСС`;
+        textDecline.textContent = `ОТКАЗАТЬСЯ`;
+        textAccept.textContent = `АВТОРИЗОВАТЬСЯ`;
+    } else {
+        textTitle.textContent = `AUTHORIZATION`;
+        textMiddle.textContent = `LOG IN TO SECURELY SAVE YOUR PROGRESS`;
+        textDecline.textContent = `DECLINE`;
+        textAccept.textContent = `ACCEPT`;
+    }
+    btnDecline.addEventListener("click", hideModal);
+    btnAccept.addEventListener("click", () => {
+        gamePushInstance.player.login();
+        hideModal();
+    });
+
+
+}
+
+function showRequestReview() {
+    let modalHtml = `<div id="modal-review"  class="scale-and-opacity-animation">
+            <div id="modal-review-top">
+                <img src="EccentricData/Icons/review_stars.png">
+            </div>
+            <div id="modal-review-middle">
+            </div>
+            <div id="modal-review-bottom">
+                <button id="modal-review-btn-no" class="modal-review-btn modal-btn-no">
+                </button>
+                <button id="modal-review-btn-yes" class="modal-review-btn modal-btn-yes">
+                </button>
+            </div>
+            </div>`;
+    showModal(modalHtml);
+    let textMiddle = document.querySelector("#modal-review-middle");
+    let btnNo = document.querySelector("#modal-review-btn-no");
+    let btnYes = document.querySelector("#modal-review-btn-yes");
+
+    btnNo.addEventListener("click", hideModal);
+    btnYes.addEventListener("click", () => {
+        gamePushInstance.app.requestReview();
+        hideModal();
+    });
+  
+    if (isRussianLanguage()) {
+        textMiddle.textContent = `НРАВИТСЯ ИГРА?`;
+        btnNo.textContent = `НЕТ`;
+        btnYes.textContent = `ДА`;
+    } else {
+        textMiddle.textContent = `DO YOU LIKE THIS GAME?`;
+        btnNo.textContent = `NO`;
+        btnYes.textContent = `YES`;
+    }
+
+}
+
 function showLeaderboard() {
-    let title = getLang() === "ru-RU" ? "Таблица лидеров" : "Leaderboard";
+    let title = isRussianLanguage() ? "Таблица лидеров" : "Leaderboard";
     let urlDefaultAvatar = "EccentricData/Icons/icon_player.png";
-    let modalHtml = `<div id="modal-leaderboard">
+    let modalHtml = `<div id="modal-leaderboard"  class="scale-and-opacity-animation">
         <div id="modal-leaderboard-top">
             <div class="title">${title}</div>
             <img src="EccentricData/Icons/btn_close.png" class="modal-content-top-btn-close">
@@ -144,32 +227,37 @@ function setLeaderboardData(index, number, avatarUrl, name, score, isPlayer) {
 }
 
 function showPromoGameModal(idGP, idYa, title) {
-    let modalHtml = `<div id="modal-promo-game">
-    <div class="modal-content">
-        <div class="modal-promo-game-content-top">
-            <button id="modal-promo-game-btn-close">&times;</button>
+    let modalHtml = `<div id="modal-promo-game" class="scale-and-opacity-animation">
+        <div id="modal-promo-game-content">
+            <div class="modal-promo-game-content-top">
+                <div></div>
+                <p></p>
+                <img src="EccentricData/Icons/btn_close.png" id="modal-promo-game-btn-close"></img>
+            </div>
+            <div class="modal-promo-game-content-middle">
+                <img src="" alt="" id="modal-promo-game-content-middle-banner">
+            </div>
+            <div class="modal-promo-game-content-bottom">
+                <a id="modal-promo-game-btn-open" class="modal-btn-yes" href="" target="_blank">
+                    <p></p>
+                </a>
+            </div>
         </div>
-        <div class="modal-promo-game-content-bottom">
-            <div id="modal-promo-game-title" class="title"></div>
-            <a id="modal-promo-game-btn-open" href="" target="_blank"></a>
-        </div>
-    </div>
-</div>`;
+    </div>`;
     showModal(modalHtml);
+    let titlePromo = document.querySelector("#eccentric-modal .modal-promo-game-content-top p");
+    let btnPromoClose = document.querySelector("#eccentric-modal .modal-promo-game-content-top img");
+    let modalPromoBanner = document.querySelector("#eccentric-modal  #modal-promo-game-content-middle-banner");
     let btnOpenPromoGame = document.querySelector("#eccentric-modal #modal-promo-game-btn-open");
-    let btnPromoClose = document.querySelector("#eccentric-modal #modal-promo-game-btn-close");
-    let titlePromo = document.querySelector("#eccentric-modal #modal-promo-game-title");
-    let modalPromoContentTop = document.querySelector("#eccentric-modal .modal-promo-game-content-top");
-    let lang = getLang();
 
     btnPromoClose.addEventListener("click", hideModal);
     btnOpenPromoGame.addEventListener("click", hideModal);
-    if (lang === "ru-RU") {
-        modalPromoContentTop.style.backgroundImage = `url(https://s3.eponesh.com/games/files/9347/banner_${idGP}_ru.jpg)`;
+    if (isRussianLanguage()) {
+        modalPromoBanner.src = `url(https://s3.eponesh.com/games/files/9347/banner_${idGP}_ru.jpg)`;
         btnOpenPromoGame.href = `https://yandex.ru/games/app/${idYa}?lang=ru`;
         btnOpenPromoGame.textContent = "Играть";
     } else {
-        modalPromoContentTop.style.backgroundImage = `url(https://s3.eponesh.com/games/files/9347/banner_${idGP}_en.jpg)`;
+        modalPromoBanner.src = `url(https://s3.eponesh.com/games/files/9347/banner_${idGP}_en.jpg)`;
         btnOpenPromoGame.href = `https://yandex.com/games/app/${idYa}?lang=en`;
         btnOpenPromoGame.textContent = "Play";
     }
@@ -179,18 +267,18 @@ function showPromoGameModal(idGP, idYa, title) {
 
 function showCustomModal(text, isCanClose) {
 
-    let modalHtml = `<div id="modal-custom">
-    <div class="modal-content modal-content-custom">
-        <div class="modal-custom-content-top">
+    let modalHtml = `<div id="modal-custom" class="scale-and-opacity-animation">
+        <div class="modal-content-custom">
+            <div class="modal-custom-content-top">
+            </div>
+            <div class="modal-custom-content-middle">
+                <div id="modal-custom-title"></div>
+            </div>
+            <div class="modal-custom-content-bottom">
+                <button id="modal-custom-btn-ok" class="modal-btn-yes">OK</button>
+            </div>
         </div>
-        <div class="modal-custom-content-middle">
-            <div id="modal-custom-title" class="title"></div>
-        </div>
-        <div class="modal-custom-content-bottom">
-            <button id="modal-custom-btn-ok">OK</button>
-        </div>
-    </div>
- </div>`;
+    </div>`;
     showModal(modalHtml);
     let title = document.querySelector("#eccentric-modal #modal-custom-title");
     let btnOk = document.querySelector("#eccentric-modal #modal-custom-btn-ok");
@@ -215,7 +303,7 @@ function toggle(modal, enable) {
 }
 
 function showCollectionModal(nameCollection) {
-    let modalHtml = `<div id="modal-our-games">
+    let modalHtml = `<div id="modal-our-games" class="scale-and-opacity-animation">
     <div class="modal-content-our-games">
         <img src="EccentricData/Icons/btn_close.png" class="modal-content-top-btn-close">
         <div class="modal-content-our-games-top">
@@ -263,21 +351,20 @@ function setCollectionData(index, nameGame, link, urlBanner) {
     textItems[index].textContent = nameGame;
 
 }
-
+function isRussianLanguage(){
+    let lang = getLang();
+    return lang === "ru-RU" || lang === "ru";
+    
+}
 function getLang() {
     let platform = window.location.hostname;
     let isYandex = platform.includes("yandex");
-    let lang;
-    if (isYandex) {
-        let href = window.location.href;
-        let ruLang = href.includes("lang=ru");
-        lang = ruLang ? "ru-RU" : "en-US";
-        return lang;
-    }
-    lang = navigator.language || navigator.userLanguage;
-    return lang;
+    return isYandex ? gamePushInstance.language : getYandexLang();
 }
-
+function getYandexLang(){
+    let yaSdk = getNativeSdk();
+    return yaSdk.environment.i18n.lang;
+}
 
 function isMobile() {
     const ua = navigator.userAgent;
@@ -288,7 +375,36 @@ function isMobile() {
         return false;
     }
 }
+function  isIOS(){
+    const ua = navigator.userAgent;
+    if (/iPhone|iPad|iPod/i.test(ua)) {
+        return true;
+    } else {
+        return false;
+    }
+}
 
 function getCurrentPlatform() {
     return window.location.hostname;
+}
+
+function getCurrencyIconYandex() {
+    return new Promise((resolve, reject) => {
+        let yaSdk = getNativeSdk();
+        yaSdk.getPayments({ signed: true }).then(_payments => {
+            _payments.getCatalog().then(products => {
+                resolve(products[0].priceCurrencyCode);
+            }).catch(err => {
+                console.log("Ошибка при получении каталога продуктов");
+                reject(err);
+            });
+        }).catch(err => {
+            console.log("Покупки недоступны");
+            reject(err);
+        });
+    });
+}
+
+function getNativeSdk() {
+  return gamePushInstance.platform.getNativeSDK();
 }
